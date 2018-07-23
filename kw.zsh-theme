@@ -72,7 +72,8 @@ prompt_end() {
 # Context: user@hostname (who am I and where am I)
 prompt_context() {
   local user=`whoami`
-  host_or_service=$(hostname | awk '{ print $4 }' | xargs host -r -t PTR | awk '{ print $5 }' | awk -F'.' '{ print $1 }')
+  # use the first 2 parts for the identification
+  host_or_service=`hostname -f | cut -d"." -f1,2`   
 
   if [[ "$user" != "$DEFAULT_USER" || -n "$SSH_CONNECTION" ]]; then
     prompt_segment $PRIMARY_FG default " %(!.%{%F{yellow}%}.)$user@$host_or_service "
