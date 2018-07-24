@@ -134,12 +134,14 @@ prompt_virtualenv() {
 }
 
 prompt_docker_host() {
-  if [[ ! -z "$DW_SERVER_NAME" ]]; then
-    prompt_segment red default "\xF0\x9F\x90\xB3: '$DW_SERVER_NAME'"
-  elif [[ ! -z "$KW_SERVER_NAME" ]]; then
-    prompt_segment red default "\xF0\x9F\x90\xB3: '$KW_SERVER_NAME'"
+  if [[ ! -z "$KW_SERVER_NAME" ]]; then
+    # read server env
+    SERVER_NAME=$KW_SERVER_NAME
+  elif [ -f /etc/servername ]; then
+    # read from file
+    SERVER_NAME=`cat /etc/servername`
   fi
- 
+  prompt_segment red default "\xF0\x9F\x90\xB3: '$SERVER_NAME'" 
 }
 
 ## Main prompt
