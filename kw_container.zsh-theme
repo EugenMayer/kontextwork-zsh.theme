@@ -72,10 +72,20 @@ prompt_end() {
 # Context: user@hostname (who am I and where am I)
 prompt_context() {
   local user=`whoami`
-  host_or_service=$(host -t A `hostname` | awk '{ print $4 }' | xargs host -r -t PTR | awk '{ print $5 }' | awk -F'.' '{ print $1 }')
+
+  # thats our container service name
+  host_and_service=$(host -t A `hostname` | awk '{ print $4 }' | xargs host -r -t PTR | awk '{ print $5 }' | awk -F'.' '{ print $1 }')
+
+  # try to find the docker host name. We do no use the IP but try to find a semantic name
+  # then display them alltogether as <user>@<docker-host>::<servicename> <dockericon>
+  if [[ ! -z "$DW_SERVER_NAME" ]]; then
+    host_and_service="${DW_SERVER_NAME}::${host_and_service} \xF0\x9F\x90\xB3"
+  elif [[ ! -z "$KW_SERVER_NAME" ]]; then
+    host_and_service="${KW_SERVER_NAME}::${host_and_service} \xF0\x9F\x90\xB3"
+  fi
 
   if [[ "$user" != "$DEFAULT_USER" || -n "$SSH_CONNECTION" ]]; then
-    prompt_segment $PRIMARY_FG default " %(!.%{%F{yellow}%}.)$user@$host_or_service "
+    prompt_segment $PRIMARY_FG default " %(!.%{%F{yellow}%}.)$user@$host_and_service "
   fi
 }
 
@@ -130,15 +140,6 @@ prompt_virtualenv() {
     prompt_segment $color $PRIMARY_FG
     print -Pn " $(basename $VIRTUAL_ENV) "
   fi
-}
-
-prompt_docker_host() {
-  if [[ ! -z "$DW_SERVER_NAME" ]]; then
-    prompt_segment red default "\xF0\x9F\x90\xB3: '$DW_SERVER_NAME'"
-  elif [[ ! -z "$KW_SERVER_NAME" ]]; then
-    prompt_segment red default "\xF0\x9F\x90\xB3: '$KW_SERVER_NAME'"
-  fi
- 
 }
 
 ## Main prompt
