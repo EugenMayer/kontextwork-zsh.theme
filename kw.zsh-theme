@@ -73,10 +73,20 @@ prompt_end() {
 prompt_context() {
   local user=`whoami`
   # use the first 2 parts for the identification
-  host_or_service=`hostname -f | cut -d"." -f1,2`   
 
+
+  if [[ ! -z "$KW_SERVER_NAME" ]]; then
+    # read server env
+    SERVER_NAME=$KW_SERVER_NAME
+  elif [ -f /etc/servername ]; then
+    # read from file
+    SERVER_NAME=`cat /etc/servername`
+  else
+    SERVER_NAME=`hostname -f | cut -d"." -f1,2`   
+  fi
+  
   if [[ "$user" != "$DEFAULT_USER" || -n "$SSH_CONNECTION" ]]; then
-    prompt_segment $PRIMARY_FG default " %(!.%{%F{yellow}%}.)$user@$host_or_service "
+    prompt_segment $PRIMARY_FG default " %(!.%{%F{yellow}%}.)$user@$ERVER_NAME "
   fi
 }
 
@@ -131,17 +141,6 @@ prompt_virtualenv() {
     prompt_segment $color $PRIMARY_FG
     print -Pn " $(basename $VIRTUAL_ENV) "
   fi
-}
-
-prompt_docker_host() {
-  if [[ ! -z "$KW_SERVER_NAME" ]]; then
-    # read server env
-    SERVER_NAME=$KW_SERVER_NAME
-  elif [ -f /etc/servername ]; then
-    # read from file
-    SERVER_NAME=`cat /etc/servername`
-  fi
-  prompt_segment red default "\xF0\x9F\x90\xB3: '$SERVER_NAME'" 
 }
 
 ## Main prompt
