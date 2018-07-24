@@ -86,7 +86,7 @@ prompt_context() {
   fi
   
   if [[ "$user" != "$DEFAULT_USER" || -n "$SSH_CONNECTION" ]]; then
-    prompt_segment $PRIMARY_FG default " %(!.%{%F{yellow}%}.)$user@$ERVER_NAME "
+    prompt_segment $PRIMARY_FG default " %(!.%{%F{yellow}%}.)$user@$SERVER_NAME "
   fi
 }
 
