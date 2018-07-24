@@ -150,6 +150,7 @@ prompt_agnoster_main() {
   prompt_virtualenv
   prompt_dir
   prompt_git
+  prompt_docker_host
   prompt_end
 }
 
